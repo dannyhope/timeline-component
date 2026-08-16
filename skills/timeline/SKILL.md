@@ -11,12 +11,12 @@ Danny's reusable timeline is **not** a markdown list, Mermaid Gantt, JSON blob, 
 
 ## Before writing HTML
 
-Read `_docs/spec.md` and `_docs/dataset-schema.md`. Copy `timeline.html`. Do not reimplement stacking.
+Read `_docs/spec.md` and `_docs/dataset-schema.md`. Copy `timeline.html` and `timeline.js`. Do not rewrite `timeline.js`.
 
 ## Produce a product timeline
 
-1. Copy `timeline.html`.
-2. Set `PLAYGROUND = false`.
+1. Copy `timeline.html` and `timeline.js`. Do not rewrite `timeline.js`.
+2. Remove `playground` from `<body>` (product).
 3. Leave **one** `<section class="timeline-source">` with:
 
 - Column 1: `<time datetime="ISO">` — timestamp or `start/end` interval
@@ -29,9 +29,9 @@ Read `_docs/spec.md` and `_docs/dataset-schema.md`. Copy `timeline.html`. Do not
 
 ## Playground vs product
 
-| Playground (`PLAYGROUND = true`) | Product (`false`) |
+| Playground (`body.playground`) | Product (no that class) |
 |----------------------------------|-------------------|
-| Demo tables, dataset radios, Flags dock | One table + column toggles; timeline if JS is on |
+| Demo tables, dataset radios, Flags dock | One table + column toggles; timeline if JS is on (`body` without `playground`) |
 
 Column checkboxes are product UI. The Flags dock is not.
 
@@ -43,4 +43,4 @@ Column checkboxes are product UI. The Flags dock is not.
 - Put the events in JSON instead of a table
 - Rewrite collision logic from memory
 
-Grok: same rules; see `grok-instructions.md`.
+Grok: paste `grok-prompt.md` into Grok’s project instructions. It points at the public GitHub repo so Grok loads CSS/JS by URL. How-to: `grok-instructions.md`.

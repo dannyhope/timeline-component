@@ -12,9 +12,9 @@ Implementation: `_docs/timeline-component.md`, `_docs/timeline-stacking-rules.md
 
 ## Standards
 
-- Keep `timeline.html` as one document (markup + CSS + layout JS)
+- Keep `timeline.js` as the renderer; do not reimplement stacking
 - ISO 8601 in column 1; column B on by default; later columns off
-- `PLAYGROUND = true` for the demo Flags dock; product copies set it `false`
+- Product vs playground is the `playground` class on `<body>` (not a flag in `timeline.js`)
 - Preferred local port: `.dev-port` (see `scripts/resolve-dev-port.sh`); announce if falling back
 - Do not add a second flags/options panel — extend the existing bottom-right dock
 
@@ -26,7 +26,7 @@ python3 -m http.server "$PORT"
 # open http://127.0.0.1:$PORT/timeline.html
 ```
 
-Usability runner: `usability-test.html` (needs the same local server so it can fetch `_docs/usability-tasks.json`). Replace the example tasks with `/usability-test generate`.
+Grok: paste [`grok-prompt.md`](grok-prompt.md) into Grok’s instructions. CSS/JS load from GitHub (jsDelivr), not from the prompt. How-to: [`grok-instructions.md`](grok-instructions.md).
 
 ## Notion vs this repo
 

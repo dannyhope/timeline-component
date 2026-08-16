@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline</title>
+  <script>document.documentElement.classList.add("js")</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dannyhope/timeline-component@main/timeline.css">
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <h1 id="pageTitle">Timeline</h1>
+      <p class="subtitle" id="pageSubtitle"></p>
+    </header>
+
+    <div class="timeline-slot">
+      <div class="timeline-wrapper">
+        <div class="timeline" id="timeline">
+          <div class="scale-grid" id="scaleGrid" aria-hidden="true"></div>
+          <div class="axis"></div>
+          <span class="period-label-measure" id="periodLabelMeasure" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div class="controls" id="controls">
+        <span class="control">
+          <label for="attachSide">Text attaches:</label>
+          <select id="attachSide">
+            <option value="left" selected>to the left of the line</option>
+            <option value="right">to the right of the line</option>
+          </select>
+        </span>
+        <label class="check"><input type="checkbox" id="fullWidth" checked> Full width</label>
+        <span class="control">
+          <label for="timelineWidth">Timeline width:</label>
+          <input type="range" id="timelineWidth" min="320" max="10000" value="900" step="1" disabled>
+          <span id="widthValue">900px</span>
+        </span>
+        <span class="control">
+          <label for="labelWidth">Text box width:</label>
+          <input type="range" id="labelWidth" min="120" max="1000" value="420" step="20">
+          <span id="labelWidthValue">420px</span>
+        </span>
+        <label class="check"><input type="checkbox" id="extendTimeline"> Extend into text space</label>
+        <span class="control">
+          <label for="periodsPlacement">Periods:</label>
+          <select id="periodsPlacement">
+            <option value="scale" selected>In scale</option>
+            <option value="events">In events area</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </span>
+        <button type="button" class="controls-minimise" id="minimiseControls" aria-controls="controls" aria-expanded="true">Minimise</button>
+      </div>
+    </div>
+
+    <div class="timeline-sources">
+      <section class="timeline-source" data-id="topic">
+        <fieldset class="col-toggles">
+          <legend>Columns</legend>
+          <label><input type="checkbox" data-col="2" checked> Event</label>
+          <label><input type="checkbox" data-col="3"> Detail</label>
+        </fieldset>
+        <table class="timeline-data" data-kind="calendar-days" data-origin="1962-10-12" data-end="1962-10-30" data-base-resolution="day">
+          <caption>Title <span class="caption-sub">Scale in one line</span></caption>
+          <thead>
+            <tr><th scope="col">Time</th><th scope="col">Event</th><th scope="col">Detail</th></tr>
+          </thead>
+          <tbody>
+            <tr id="e1">
+              <td><time datetime="1962-10-14T07:30">1962-10-14T07:30</time></td>
+              <td>What happened</td>
+              <td>Optional extra (hidden until Detail is on).</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <footer class="site-footer">
+      <a href="https://dannyhope.co.uk" target="_blank" rel="noopener noreferrer">A Danny Hope product</a>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/gh/dannyhope/timeline-component@main/timeline.js"></script>
+</body>
+</html>

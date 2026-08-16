@@ -11,8 +11,8 @@ This repo is the **template** for presenting timeline-shaped information — on 
 
 | Surface | Chrome |
 |---------|--------|
-| **Playground** (`timeline.html` with `PLAYGROUND = true`) | Dataset switcher, Flags options dock, width sliders — developer-only |
-| **Product** (agent output, site embed) | Title, subtitle, timeline (if JS), table + column toggles. Set `PLAYGROUND = false`. No Flags dock, no dataset switcher |
+| **Playground** (`body` has class `playground`) | Dataset switcher, Flags options dock, width sliders — developer-only |
+| **Product** (agent output, site embed) | Title, subtitle, timeline (if JS), table + column toggles. `body` without class `playground`. No Flags dock, no dataset switcher |
 
 Demo datasets are HTML tables in `timeline.html` (ISO time in column 1). The table contract is `_docs/dataset-schema.md`.
 
@@ -126,8 +126,9 @@ The arithmetic midpoint would be wrong here: for a one-decade interval it is `5.
 - Dynamic range spanning ~10⁶⁰× (Planck → deep future) via log mapping.
 
 ## Tech
-- HTML first. JS (ResizeObserver, collision tests) paints the timeline from the table.
-- No JSON fetch required. `file://` works.
+- HTML first. [`timeline.js`](../timeline.js) paints the timeline from the table. Do not rewrite that file to present a new topic.
+- Styles live in [`timeline.css`](../timeline.css). Grok product files load both from the public GitHub repo via jsDelivr (see [`grok-template.html`](../grok-template.html)).
+- No JSON fetch required. The playground works over `file://`. Grok output needs a network to load the CDN copies.
 - Column visibility is CSS `:has()` so it works with JS off.
 
 Implementation contract: `_docs/timeline-component.md` and `_docs/timeline-stacking-rules.md`.

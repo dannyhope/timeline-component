@@ -1,0 +1,538 @@
+    :root {
+      --timeline-color: #b0b0b0;
+      --hairline-color: #a0a0a0;
+      --text-color: #333;
+      --bg: #fafafa;
+      --text-reserve: 180px; /* fallback; JS overwrites with measured value */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-color);
+      line-height: 1.4;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .page {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .dataset-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+    }
+
+    .dataset-bar label {
+      color: #555;
+      font-weight: 500;
+    }
+
+    .dataset-bar select {
+      font: inherit;
+      padding: 0.35rem 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      color: #333;
+      max-width: min(100%, 28rem);
+    }
+
+    h1 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 0;
+      max-width: 42rem;
+    }
+
+    .timeline-slot {
+      position: relative;
+      min-height: calc(var(--scale-height, 3.2rem) + 340px + 1.75rem);
+    }
+
+    /* Timeline container */
+    .timeline-wrapper {
+      position: relative;
+      /*
+       * The timeline has its own horizontal canvas. Pull it out of the
+       * centred .page max-width so the timeline-width control can use the
+       * available viewport instead of being constrained by the page column.
+       * Height follows the stack; the options panel is positioned absolutely
+       * so it does not move when that height changes.
+       */
+      width: 100vw;
+      left: 50%;
+      transform: translateX(-50%);
+      min-height: 340px;
+      padding-top: var(--scale-height, 3.2rem); /* room for hierarchical scale grid */
+      overflow-x: auto;
+    }
+
+    .timeline {
+      position: relative;
+      width: 100%;
+      font-size: 1rem; /* browser root size; independent of timeline width */
+      font-weight: 400;
+      font-synthesis: none;
+      height: 320px; /* extra room for tall stacks when compressed */
+    }
+
+    /* The main horizontal axis — JS sets left/right according to attachment side */
+    .axis {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--timeline-color);
+    }
+
+    /*
+     * Hierarchical scale grid above the axis (year / month / day, era / tick, …).
+     * Each unit level is a row; vertical lines divide cells and span the grid.
+     */
+    .scale-grid {
+      position: absolute;
+      top: 0;
+      transform: translateY(-100%);
+      box-sizing: border-box;
+      border: 1px solid #d0d0d0;
+      background: var(--bg);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Periods sit under the axis and reserve vertical space for event labels */
+    .scale-grid.is-in-events {
+      transform: none;
+      top: 1px;
+      z-index: 4;
+    }
+
+    .scale-grid.is-hidden {
+      display: none;
+    }
+
+    .scale-row {
+      position: relative;
+      height: 1.45rem;
+      border-top: 1px solid #d0d0d0;
+    }
+
+    .scale-row:first-child {
+      border-top: none;
+    }
+
+    .scale-cell {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      box-sizing: border-box;
+      border-left: 1px solid #d0d0d0;
+      padding: 0.12rem 0.35rem 0;
+      color: #888;
+      font-weight: 400;
+      font-size: 0.925rem;
+      line-height: 1.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Outer left edge comes from .scale-grid border */
+    .scale-row .scale-cell:first-child {
+      border-left: none;
+    }
+
+    .scale-cell.is-summary {
+      font-weight: 600;
+      color: #444;
+    }
+
+    /* Off-DOM measurer — same type styles as scale cell labels */
+    .period-label-measure {
+      position: absolute;
+      visibility: hidden;
+      pointer-events: none;
+      top: -9999px;
+      left: 0;
+      white-space: nowrap;
+      font-weight: 400;
+      font-size: 0.925rem;
+      font-variant-numeric: tabular-nums;
+      color: #888;
+    }
+
+    /* Individual event */
+    .event {
+      position: absolute;
+      top: 0;
+      /* left is set in px by JS */
+    }
+
+    /* The hairline that joins the event to its label */
+    .hairline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1px;
+      background: var(--hairline-color);
+    }
+
+    /* Label sits beside the hairline; JavaScript sets its width */
+    .label {
+      position: absolute;
+      left: 6px;
+      top: 0; /* overridden by JS */
+      width: max-content; /* fallback before JavaScript initializes */
+      color: var(--text-color);
+      font-weight: 400;
+      line-height: 1.25;
+      white-space: nowrap;
+      z-index: 10;
+      background: rgba(250, 250, 250, 0.92);
+      backdrop-filter: blur(6px);
+      padding: 2px 6px;
+      border-radius: 3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow-wrap: break-word;
+    }
+
+    .label .date {
+      display: block;
+      color: #888;
+      font-weight: 400;
+      margin-top: 1px;
+    }
+
+    .label .desc {
+      display: block;
+      color: #555;
+      font-weight: 400;
+      margin-top: 2px;
+      white-space: normal;
+      line-height: 1.3;
+    }
+
+    .label .num {
+      font-weight: 600;
+    }
+
+    /* Initial / fallback stacking (JS takes over and optimises) */
+    .event .hairline { height: 40px; }
+    .event .label { top: 44px; }
+
+    /*
+     * Options dock. The panel and its collapsed Flags button share the
+     * bottom-right corner and the same transform origin, so shrinking one
+     * while growing the other reads as a single element changing size.
+     */
+    .controls {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 40;
+      width: min(calc(100vw - 2.5rem), 46rem);
+      max-height: calc(100vh - 2.5rem);
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transform-origin: 100% 100%;
+    }
+
+    .controls label {
+      color: #555;
+    }
+
+    /* Keep a label, its input and its readout on one line when the dock wraps */
+    .controls .control {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+
+    .controls-minimise {
+      margin-left: auto;
+      font: inherit;
+      font-size: 0.85rem;
+      color: #555;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .controls-minimise:hover {
+      background: #f2f2f2;
+    }
+
+    /* Collapsed state of the options panel */
+    .flags-fab {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 40;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      border: 1px solid #e5e5e5;
+      background: #fff;
+      color: #333;
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      transform-origin: 100% 100%;
+    }
+
+    .flags-fab:hover {
+      background: #f2f2f2;
+    }
+
+    .controls.dock-hidden,
+    .flags-fab.dock-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .controls.dock-hidden {
+      transform: scale(0.55);
+    }
+
+    .flags-fab.dock-hidden {
+      transform: scale(0.4);
+    }
+
+    /* Animate only after the stored state has been applied on load */
+    body.dock-animated .controls,
+    body.dock-animated .flags-fab {
+      transition:
+        opacity 160ms ease-out,
+        transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        visibility 0s;
+    }
+
+    body.dock-animated .controls.dock-hidden,
+    body.dock-animated .flags-fab.dock-hidden {
+      transition:
+        opacity 140ms ease-in,
+        transform 240ms cubic-bezier(0.4, 0, 0.6, 1),
+        visibility 0s linear 240ms;
+    }
+
+    body:not(.playground) .dataset-bar,
+    body:not(.playground) .controls,
+    body:not(.playground) .flags-fab {
+      display: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body.dock-animated .controls,
+      body.dock-animated .flags-fab,
+      body.dock-animated .controls.dock-hidden,
+      body.dock-animated .flags-fab.dock-hidden {
+        transition: none;
+      }
+    }
+
+    .controls .check {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .controls select {
+      font: inherit;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      color: #333;
+    }
+
+    .controls input[type="range"] {
+      width: 140px;
+      vertical-align: middle;
+    }
+
+    .controls input[type="range"]:disabled {
+      opacity: 0.45;
+    }
+
+    #widthValue,
+    #labelWidthValue {
+      font-variant-numeric: tabular-nums;
+      color: #555;
+      display: inline-block;
+      min-width: 4rem; /* fits values like 2381px without shifting neighbours */
+    }
+
+
+    /* Progressive enhancement: the table is the data. JS paints the timeline. */
+    .timeline-slot {
+      display: none;
+    }
+    html.js .timeline-slot {
+      display: block;
+    }
+    html:not(.js) .flags-fab,
+    html:not(.js) .controls {
+      display: none !important;
+    }
+
+    .dataset-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+    }
+    .dataset-bar-label {
+      color: #555;
+      font-weight: 500;
+    }
+    .dataset-bar label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 400;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .timeline-sources {
+      margin-top: 2.5rem;
+    }
+    .timeline-source {
+      display: none;
+    }
+    .page:has(#ds-cuban:checked) .timeline-source[data-id="cuban"],
+    .page:has(#ds-sprint:checked) .timeline-source[data-id="sprint"],
+    .page:has(#ds-civilisation:checked) .timeline-source[data-id="civilisation"],
+    .page:has(#ds-earth:checked) .timeline-source[data-id="earth"],
+    .page:has(#ds-universe:checked) .timeline-source[data-id="universe"] {
+      display: block;
+    }
+    .timeline-sources .timeline-source:only-child {
+      display: block;
+    }
+
+    .col-toggles {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0.6rem 0.85rem 0.75rem;
+      margin: 0 0 1rem;
+      background: #fff;
+    }
+    .col-toggles legend {
+      font-size: 0.85rem;
+      color: #555;
+      padding: 0 0.35rem;
+    }
+    .col-toggles label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-right: 0.85rem;
+      cursor: pointer;
+    }
+
+    .timeline-data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+      background: #fff;
+    }
+    .timeline-data caption {
+      text-align: left;
+      font-weight: 600;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      caption-side: top;
+    }
+    .timeline-data .caption-sub {
+      display: block;
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: #666;
+      margin-top: 0.15rem;
+    }
+    .timeline-data th,
+    .timeline-data td {
+      border: 1px solid #e0e0e0;
+      padding: 0.45rem 0.65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    .timeline-data th {
+      background: #f3f3f3;
+      font-weight: 500;
+    }
+    .timeline-data td:first-child {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      color: #444;
+    }
+    .timeline-eras {
+      display: none;
+    }
+
+    .timeline-source:not(:has(.col-toggles input[data-col="2"]:checked)) .timeline-data :is(th, td):nth-child(2),
+    .timeline-source:not(:has(.col-toggles input[data-col="3"]:checked)) .timeline-data :is(th, td):nth-child(3),
+    .timeline-source:not(:has(.col-toggles input[data-col="4"]:checked)) .timeline-data :is(th, td):nth-child(4),
+    .timeline-source:not(:has(.col-toggles input[data-col="5"]:checked)) .timeline-data :is(th, td):nth-child(5),
+    .timeline-source:not(:has(.col-toggles input[data-col="6"]:checked)) .timeline-data :is(th, td):nth-child(6) {
+      display: none;
+    }
+
+    .site-footer {
+      margin-top: 2.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #888;
+    }
+    .site-footer a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .site-footer a:hover {
+      color: #333;
+    }
+
+  

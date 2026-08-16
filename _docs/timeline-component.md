@@ -25,14 +25,15 @@ one maintained specification.
 
 ## Current structure
 
-- `timeline.html` is the document: tables are the data; JS paints the timeline.
+- `timeline.html` is the playground document: tables are the data; `timeline.css` styles it; `timeline.js` paints the timeline.
+- Product pages for Grok start from `grok-template.html` and load CSS/JS from the public GitHub repo.
 - Demo datasets are `<table class="timeline-data">` sections in that file.
 - Without JS the tables and column toggles remain usable (progressive enhancement).
 - The timeline canvas is full viewport width and is independent of the centred
   page column.
 - The timeline height follows the stacked labels.
 - In **playground** mode the options panel is fixed to the bottom-right of the
-  viewport. In **product** mode (`PLAYGROUND = false`) that dock is not shown.
+  viewport. In **product** mode (`body` without class `playground`) that dock is not shown.
 - There is no footer commentary.
 
 ### Options dock

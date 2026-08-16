@@ -1,50 +1,23 @@
-# Grok: how to present a timeline
+# How to give this timeline to Grok
 
-Use this whenever the user wants history, a project plan, a sequence of dated events, or says “show this as a timeline”.
+Paste **only** [`grok-prompt.md`](grok-prompt.md). It is short on purpose: CSS and JS live in the public repo, not in Grok’s rules.
 
-The **table is the data**. The timeline is an enhancement of that table (progressive enhancement / Hijax). Do not invent a new visual language. Do not use a markdown bullet list or a Mermaid Gantt as the primary view.
+Repo: https://github.com/dannyhope/timeline-component
 
-## What to emit
+## Grok Project (best)
 
-One **self-contained HTML file** the user can open in a browser, with or without JavaScript.
+1. On [grok.com](https://grok.com), open **Projects** and create one (e.g. “Timelines”).
+2. Paste **[`grok-prompt.md`](grok-prompt.md)** into that project’s instructions.
+3. Chat **inside that project**. Ask for a timeline.
 
-1. Copy `timeline.html` from this repo. Keep stacking, hairlines, and the scale grid.
-2. Set `PLAYGROUND = false`.
-3. Put the topic in **one** `<table class="timeline-data">`:
+Grok should emit one HTML file that **links** `timeline.css` and `timeline.js` from jsDelivr, with a new data table for the topic. It should not paste the renderer into the file.
 
-```html
-<section class="timeline-source" data-id="topic">
-  <fieldset class="col-toggles">
-    <legend>Columns</legend>
-    <label><input type="checkbox" data-col="2" checked> Event</label>
-    <label><input type="checkbox" data-col="3"> Detail</label>
-  </fieldset>
-  <table class="timeline-data" data-kind="calendar-days" data-origin="1962-10-12" data-end="1962-10-30">
-    <caption>Title <span class="caption-sub">Scale in one line</span></caption>
-    <thead>
-      <tr><th>Time</th><th>Event</th><th>Detail</th></tr>
-    </thead>
-    <tbody>
-      <tr id="e1">
-        <td><time datetime="1962-10-14T07:30">1962-10-14T07:30</time></td>
-        <td>What happened</td>
-        <td>Optional extra (hidden until the Detail column is on).</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-```
+If the download contains a homemade `<script>` instead of the jsDelivr URL, it guessed. Remind it: “Use grok-template.html from github.com/dannyhope/timeline-component. Link timeline.js from jsDelivr. Only change the table.”
 
-4. Column 1 is ISO 8601 (instant or `start/end`). Column 2 is on by default; later columns are off.
-5. Follow `_docs/dataset-schema.md`. Hairlines sit at the centre of the known interval.
-6. Default label attachment is **left** of the hairline.
+## One-off chat
 
-## Attach to a Grok Project
+Paste the whole of [`grok-prompt.md`](grok-prompt.md), then ask.
 
-Add this file, `timeline.html`, `_docs/dataset-schema.md`, and `_docs/spec.md`.
+## Every Grok chat
 
-## Do not
-
-- Reimplement collision stacking
-- Replace the table with JSON
-- Include the Flags developer dock on a published timeline
+Custom instructions can be the contents of [`grok-prompt.md`](grok-prompt.md).
