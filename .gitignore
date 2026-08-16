@@ -1,0 +1,6 @@
+_vibing/
+.DS_Store
+.claude/
+node_modules/
+dist/
+.env

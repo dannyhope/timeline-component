@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuban Missile Crisis Timeline — Adaptive Stacking Demo</title>
+  <style>
+    :root {
+      --timeline-color: #b0b0b0;
+      --hairline-color: #a0a0a0;
+      --text-color: #333;
+      --accent: #e05a3c;
+      --bg: #fafafa;
+      --text-reserve: 180px; /* fallback; JS overwrites with measured value */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-color);
+      line-height: 1.4;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 1.75rem;
+    }
+
+    .note {
+      background: #f0f4f8;
+      border-left: 3px solid #5b8def;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: #444;
+      margin-bottom: 2rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* Timeline container */
+    .timeline-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 340px;
+      padding-top: 2.5rem;
+      overflow-x: auto;
+    }
+
+    .timeline {
+      position: relative;
+      width: 100%;
+      height: 320px; /* extra room for tall stacks when compressed */
+    }
+
+    /* The main horizontal axis — ends before the measured text reserve */
+    .axis {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: var(--text-reserve);
+      height: 1px;
+      background: var(--timeline-color);
+    }
+
+    /* Month / period labels above the axis */
+    .period-label {
+      position: absolute;
+      top: -1.6rem;
+      font-size: 0.75rem;
+      color: #888;
+      white-space: nowrap;
+    }
+
+    .period-label.start {
+      left: 0;
+    }
+
+    .period-label.mid {
+      left: 40%;
+      transform: translateX(-50%);
+    }
+
+    .period-label.end {
+      right: var(--text-reserve);
+      transform: translateX(50%);
+    }
+
+    .period-label.summary {
+      left: 50%;
+      transform: translateX(-50%);
+      display: none; /* shown only when the timeline is very compressed */
+      font-weight: 500;
+    }
+
+    /* Individual event */
+    .event {
+      position: absolute;
+      top: 0;
+      /* left is set in px by JS */
+    }
+
+    /* The hairline that joins the event to its label */
+    .hairline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1px;
+      background: var(--hairline-color);
+    }
+
+    /* Label sits to the right of the hairline and hugs its text */
+    .label {
+      position: absolute;
+      left: 6px;
+      top: 0; /* overridden by JS */
+      font-size: 0.78rem;
+      width: max-content; /* hug the text */
+      color: var(--text-color);
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .label .date {
+      display: block;
+      font-size: 0.7rem;
+      color: #888;
+      margin-top: 1px;
+    }
+
+    .label .desc {
+      display: block;
+      font-size: 0.72rem;
+      color: #555;
+      margin-top: 2px;
+      max-width: 16rem; /* keeps full-mode labels from becoming excessively wide */
+      white-space: normal;
+      line-height: 1.3;
+    }
+
+    .label .num {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .label.accent {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .label.accent .date {
+      color: #c04a32;
+    }
+
+    /* Initial / fallback stacking (JS takes over and optimises) */
+    .event .hairline { height: 40px; }
+    .event .label { top: 44px; }
+
+    /* Tiny tick marks on the axis */
+    .tick {
+      position: absolute;
+      top: -3px;
+      width: 1px;
+      height: 7px;
+      background: var(--timeline-color);
+    }
+
+    .controls {
+      margin: 1.75rem 0 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .controls label {
+      color: #555;
+    }
+
+    .controls select {
+      font: inherit;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      color: #333;
+    }
+
+    footer {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #888;
+      border-top: 1px solid #e5e5e5;
+      padding-top: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .label {
+        font-size: 0.72rem;
+      }
+      .label .date {
+        font-size: 0.65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Cuban Missile Crisis</h1>
+    <p class="subtitle">October 1962 — thirteen days that brought the world to the brink</p>
+
+    <div class="note">
+      <strong>Resize this window</strong> or change the label mode.
+      Label widths are measured live — the right reserve hugs the longest text.
+      Hairlines never go closer than 1&nbsp;px.
+      Stacking is fully dynamic and runs right-to-left: right-hand events claim 
+      the high positions first, so left-hand events drop only when necessary. 
+      This keeps longer hairlines on the left and stops them cutting through text.
+      Short labels (numbers) stay compact.
+    </div>
+
+    <div class="timeline-wrapper">
+      <div class="timeline" id="timeline">
+        <!-- Axis -->
+        <div class="axis"></div>
+
+        <!-- Period labels -->
+        <div class="period-label start">12 Oct</div>
+        <div class="period-label mid">mid-October</div>
+        <div class="period-label end">30 Oct 1962</div>
+        <div class="period-label summary">12–30 October 1962</div>
+
+        <!-- Events: data-day is days since 12 Oct 1962 -->
+        <div class="event" data-id="1" data-day="2">
+          <div class="hairline"></div>
+          <div class="label">
+            U-2 photographs missile sites
+            <span class="date">14 October</span>
+          </div>
+        </div>
+
+        <div class="event" data-id="2" data-day="4">
+          <div class="hairline"></div>
+          <div class="label">
+            Kennedy informed · ExComm formed
+            <span class="date">16 October</span>
+          </div>
+        </div>
+
+        <div class="event" data-id="3" data-day="10">
+          <div class="hairline"></div>
+          <div class="label">
+            Public announcement &amp; quarantine
+            <span class="date">22 October</span>
+          </div>
+        </div>
+
+        <div class="event" data-id="4" data-day="12">
+          <div class="hairline"></div>
+          <div class="label">
+            Soviet ships reach quarantine line
+            <span class="date">24 October</span>
+          </div>
+        </div>
+
+        <div class="event" data-id="5" data-day="14">
+          <div class="hairline"></div>
+          <div class="label">
+            First Khrushchev letter arrives
+            <span class="date">26 October</span>
+          </div>
+        </div>
+
+        <div class="event" data-id="6" data-day="15">
+          <div class="hairline"></div>
+          <div class="label accent">
+            Black Saturday
+            <span class="date">27 October</span>
+          </div>
+        </div>
+
+        <div class="event" data-id="7" data-day="16">
+          <div class="hairline"></div>
+          <div class="label">
+            Khrushchev agrees to remove missiles
+            <span class="date">28 October</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <label for="labelMode">Event labels:</label>
+      <select id="labelMode">
+        <option value="titles" selected>Titles (current)</option>
+        <option value="numbers">Just numbers (order)</option>
+        <option value="full">Titles + descriptions</option>
+      </select>
+    </div>
+
+    <footer>
+      Adaptive stacking timeline · hairline connectors · text to the right of each hairline<br>
+      Historical events simplified for demonstration. Black Saturday (27 Oct) is the critical peak.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const timeline = document.getElementById('timeline');
+      const events = Array.from(timeline.querySelectorAll('.event'));
+      const startLabel = timeline.querySelector('.period-label.start');
+      const midLabel = timeline.querySelector('.period-label.mid');
+      const endLabel = timeline.querySelector('.period-label.end');
+      const summaryLabel = timeline.querySelector('.period-label.summary');
+      const modeSelect = document.getElementById('labelMode');
+      const TOTAL_DAYS = 18; // 12 Oct → 30 Oct
+      const MIN_HAIRLINE_GAP = 1;
+      const N = events.length;
+
+      // Content for the three display modes (used for testing different text lengths)
+      const CONTENT = {
+        '1': {
+          title: 'U-2 photographs missile sites',
+          desc: 'CIA U-2 flight over western Cuba captures images of Soviet MRBM sites under construction.',
+          date: '14 October'
+        },
+        '2': {
+          title: 'Kennedy informed · ExComm formed',
+          desc: 'President Kennedy is briefed. The Executive Committee of the National Security Council is created.',
+          date: '16 October'
+        },
+        '3': {
+          title: 'Public announcement & quarantine',
+          desc: 'Kennedy addresses the nation on television and announces a naval quarantine of Cuba.',
+          date: '22 October'
+        },
+        '4': {
+          title: 'Soviet ships reach quarantine line',
+          desc: 'Soviet vessels approach the quarantine line; several turn back after tense hours.',
+          date: '24 October'
+        },
+        '5': {
+          title: 'First Khrushchev letter arrives',
+          desc: 'A long, emotional letter from Khrushchev proposes removing the missiles in exchange for a no-invasion pledge.',
+          date: '26 October'
+        },
+        '6': {
+          title: 'Black Saturday',
+          desc: 'A U-2 is shot down over Cuba. A second letter demands removal of Jupiter missiles from Turkey. The crisis peaks.',
+          date: '27 October'
+        },
+        '7': {
+          title: 'Khrushchev agrees to remove missiles',
+          desc: 'Radio Moscow announces that the Soviet Union will dismantle the weapons and return them home.',
+          date: '28 October'
+        }
+      };
+
+      function rectsOverlap(a, b) {
+        return !(
+          a.right <= b.left ||
+          a.left >= b.right ||
+          a.bottom <= b.top ||
+          a.top >= b.bottom
+        );
+      }
+
+      function setLabelContent(mode) {
+        events.forEach(ev => {
+          const id = ev.dataset.id;
+          const data = CONTENT[id];
+          if (!data) return;
+
+          const label = ev.querySelector('.label');
+          if (!label) return;
+
+          if (mode === 'numbers') {
+            label.style.whiteSpace = 'nowrap';
+            label.innerHTML = `<span class="num">${id}</span>`;
+          } else if (mode === 'full') {
+            label.style.whiteSpace = 'normal';
+            label.innerHTML = `
+              ${data.title}
+              <span class="desc">${data.desc}</span>
+              <span class="date">${data.date}</span>
+            `;
+          } else { // titles (default)
+            label.style.whiteSpace = 'nowrap';
+            label.innerHTML = `
+              ${data.title}
+              <span class="date">${data.date}</span>
+            `;
+          }
+        });
+      }
+
+      function measureAndLayout() {
+        // Reset forced width
+        timeline.style.width = '100%';
+
+        // 1. Measure labels — reserve hugs the longest text
+        let maxLabelWidth = 0;
+        const metrics = events.map(ev => {
+          const label = ev.querySelector('.label');
+          const w = label.offsetWidth;
+          const h = label.offsetHeight;
+          maxLabelWidth = Math.max(maxLabelWidth, w);
+          return { ev, label, w, h, id: ev.dataset.id };
+        });
+
+        const reserve = Math.ceil(maxLabelWidth + 14);
+        timeline.style.setProperty('--text-reserve', reserve + 'px');
+
+        // 2. Min width that still allows 1 px gaps + text
+        const minHairlineSpan = (N * 2) - 1;
+        const minTotal = minHairlineSpan + reserve + 8;
+        const available = timeline.parentElement.clientWidth;
+        if (available < minTotal) {
+          timeline.style.width = minTotal + 'px';
+        }
+
+        const fullWidth = timeline.clientWidth;
+        const usable = Math.max(fullWidth - reserve, minHairlineSpan);
+
+        // 3. Horizontal placement (time order, ≥1 px gaps)
+        const sorted = metrics
+          .map(m => ({ ...m, day: parseFloat(m.ev.dataset.day) }))
+          .sort((a, b) => a.day - b.day);
+
+        let lastX = -Infinity;
+        sorted.forEach(m => {
+          let x = (m.day / TOTAL_DAYS) * usable;
+          if (x < lastX + MIN_HAIRLINE_GAP) x = lastX + MIN_HAIRLINE_GAP;
+          lastX = x;
+          m.x = Math.round(x);
+          m.ev.style.left = m.x + 'px';
+        });
+
+        // 4. Fully dynamic vertical stacking (right-to-left)
+        //    Place rightmost events first so they claim the high positions.
+        //    Left-hand events are forced lower only when they collide.
+        //    Result: longer hairlines on the left, shorter on the right —
+        //    preventing vertical lines from cutting through text that
+        //    extends rightward from earlier events.
+        //    Short text (numbers) still packs tightly with almost no stacking.
+        const placed = [];
+        let maxBottom = 0;
+        const BASE_TOP = 24;
+        const STEP = 4;
+
+        // Right-to-left order
+        const rightToLeft = sorted.slice().reverse();
+
+        rightToLeft.forEach(m => {
+          let top = BASE_TOP;
+
+          let attempts = 0;
+          while (attempts < 120) {
+            const candidate = {
+              left:  m.x + 6,
+              right: m.x + 6 + m.w,
+              top:   top,
+              bottom: top + m.h
+            };
+
+            if (!placed.some(p => rectsOverlap(candidate, p))) break;
+
+            top += STEP;
+            attempts++;
+          }
+
+          m.label.style.top = top + 'px';
+          const hairline = m.ev.querySelector('.hairline');
+          hairline.style.height = Math.max(10, top - 4) + 'px';
+
+          const finalRect = {
+            left:  m.x + 6,
+            right: m.x + 6 + m.w,
+            top:   top,
+            bottom: top + m.h
+          };
+          placed.push(finalRect);
+          maxBottom = Math.max(maxBottom, finalRect.bottom);
+        });
+
+        // 5. Timeline height — only as tall as the final stack requires
+        const neededHeight = Math.max(160, maxBottom + 24);
+        timeline.style.height = neededHeight + 'px';
+
+        // 6. Period labels — summarise when the timeline is very compressed
+        const COMPRESS_THRESHOLD = 220;
+
+        if (usable < COMPRESS_THRESHOLD) {
+          // Show single summary, hide the three individual labels
+          if (startLabel) startLabel.style.display = 'none';
+          if (midLabel) midLabel.style.display = 'none';
+          if (endLabel) endLabel.style.display = 'none';
+          if (summaryLabel) {
+            summaryLabel.style.display = '';
+            // Centre the summary over the usable (axis) area
+            summaryLabel.style.left = (usable / 2) + 'px';
+          }
+        } else {
+          // Normal three-label mode
+          if (startLabel) startLabel.style.display = '';
+          if (endLabel) endLabel.style.display = '';
+          if (summaryLabel) summaryLabel.style.display = 'none';
+
+          if (midLabel) {
+            if (usable < 320) {
+              midLabel.style.display = 'none';
+            } else {
+              midLabel.style.display = '';
+              midLabel.style.left = (usable * 0.42) + 'px';
+            }
+          }
+        }
+      }
+
+      function refresh() {
+        try {
+          setLabelContent(modeSelect ? modeSelect.value : 'titles');
+          // Force layout so offsetWidth/offsetHeight are accurate
+          void timeline.offsetHeight;
+          measureAndLayout();
+        } catch (err) {
+          console.error('Timeline layout error:', err);
+        }
+      }
+
+      // Initial
+      refresh();
+
+      // Mode changes
+      if (modeSelect) {
+        modeSelect.addEventListener('change', () => {
+          requestAnimationFrame(refresh);
+        });
+      }
+
+      // Resize
+      if (window.ResizeObserver) {
+        const ro = new ResizeObserver(() => refresh());
+        ro.observe(timeline.parentElement);
+      } else {
+        window.addEventListener('resize', refresh);
+      }
+
+      window.addEventListener('load', refresh);
+    })();
+  </script>
+</body>
+</html>
