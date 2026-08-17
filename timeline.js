@@ -61,7 +61,7 @@
       const MIN_WIDTH_SLACK = 8;
       const SAME_DAY_NUDGE = 3;
       const MAX_LABEL_WIDTH = 1000;
-      const MAX_LABEL_VIEWPORT_RATIO = 0.95;
+      const MAX_LABEL_CONTAINER_RATIO = 0.95;
 
       // Vertical
       const BASE_TOP = 24;
@@ -117,32 +117,27 @@
       let previousPeriodsPlacement = null;
       let previousDatasetId = null;
 
-      /*
-       * The full-bleed wrapper is sized from the visible page width so it never
-       * reaches under a vertical scrollbar and scrolls the page sideways.
-       */
-      function syncViewportWidth() {
-        timelineWrapper.style.setProperty(
-          '--viewport-width',
-          document.documentElement.clientWidth + 'px'
-        );
-      }
-
       function availableWidth() {
-        syncViewportWidth();
         return timeline.parentElement.clientWidth;
       }
 
-      function syncWidthControl(fullWidth) {
-        const available = availableWidth();
-        const minimumWidth = parseInt(controls.width.min, 10);
-        const width = Math.max(minimumWidth, available);
+      function capLabelWidth(labelWidth) {
+        return Math.min(
+          labelWidth,
+          MAX_LABEL_WIDTH,
+          Math.max(0, Math.round(availableWidth() * MAX_LABEL_CONTAINER_RATIO))
+        );
+      }
 
-        controls.width.max = Math.max(parseInt(controls.width.max, 10), width);
+      function syncWidthControl(fullWidth) {
+        const available = Math.round(availableWidth());
+
+        controls.width.max = Math.max(parseInt(controls.width.max, 10), available);
         controls.width.disabled = fullWidth;
 
         if (fullWidth) {
-          controls.width.value = width;
+          controls.width.value = String(available);
+          return available;
         }
 
         return parseInt(controls.width.value, 10);
@@ -576,11 +571,7 @@
       }
 
       function measureLabels(attachLeft, labelWidth) {
-        const maxWidth = Math.min(
-          labelWidth,
-          MAX_LABEL_WIDTH,
-          Math.round(window.innerWidth * MAX_LABEL_VIEWPORT_RATIO)
-        );
+        const maxWidth = capLabelWidth(labelWidth);
 
         return events
           .map(function (ev) {
@@ -635,11 +626,7 @@
       }
 
       function constrainLabelWidths(items, labelWidth) {
-        const maxWidth = Math.min(
-          labelWidth,
-          MAX_LABEL_WIDTH,
-          Math.round(window.innerWidth * MAX_LABEL_VIEWPORT_RATIO)
-        );
+        const maxWidth = capLabelWidth(labelWidth);
 
         items.forEach(function (item) {
           item.label.style.width = 'max-content';
@@ -1051,8 +1038,11 @@
         previousPeriodsPlacement = periodsPlacement;
         previousDatasetId = active.id;
 
-        timeline.style.width = width + 'px';
-        controls.widthValue.textContent = width + 'px';
+        if (settings.fullWidth) {
+          timeline.style.width = '100%';
+        } else {
+          timeline.style.width = width + 'px';
+        }
 
         const items = measureLabels(attachLeft, labelWidth);
         const widest = items.reduce(function (max, item) {
@@ -1062,17 +1052,26 @@
 
         const minHairlineSpan = Math.max((items.length * 2) - 1, 1);
         const minTotal = minHairlineSpan + baseReserve + MIN_WIDTH_SLACK;
-        if (width < minTotal) {
+        // Product / Full width stay inside the parent. The playground slider
+        // may grow the canvas so the 1px hairline gap still fits.
+        if (!settings.fullWidth && width < minTotal) {
           timeline.style.width = minTotal + 'px';
         }
 
+        controls.widthValue.textContent = timeline.clientWidth + 'px';
+
         const total = timeline.clientWidth;
-        const reserve = extendTimeline
+        let reserve = extendTimeline
           ? fittedReserve(items, total, attachLeft, baseReserve)
           : baseReserve;
+        if (settings.fullWidth) {
+          reserve = Math.min(reserve, Math.max(total - HAIRLINE_WIDTH, 0));
+        }
         timeline.style.setProperty('--text-reserve', reserve + 'px');
 
-        const usable = Math.max(total - reserve, minHairlineSpan);
+        const usable = settings.fullWidth
+          ? Math.max(total - reserve, HAIRLINE_WIDTH)
+          : Math.max(total - reserve, minHairlineSpan);
 
         positionHairlines(items, usable, attachLeft ? reserve : 0);
         controls.labelWidthValue.textContent = labelWidth + 'px';

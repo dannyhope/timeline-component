@@ -26,12 +26,13 @@ readable while the timeline is resized.
 
 ## Horizontal rules
 
-- The timeline canvas is full-bleed edge-to-edge across the viewport and is not
-  constrained by the centred page column. The controls may remain in that
-  centred column.
-- Full width mode (default) keeps the timeline equal to the wrapper's
+- The timeline canvas fills its parent container and is never wider than that
+  container. It is not full-bleed to the viewport. The controls stay in the
+  same column.
+- Full width mode (default) keeps the timeline equal to the parent's
   available width and updates on resize. With Full width off, the Timeline
-  width slider sets a fixed scale.
+  width slider sets a fixed scale; the wrapper may then scroll if that scale
+  exceeds the container.
 - Text attached to the right reserves space on the right of the axis. The
   hairlines occupy the remaining space.
 - Text attached to the left mirrors that arrangement: the reserve is on the
@@ -39,17 +40,19 @@ readable while the timeline is resized.
 - Label widths are measured from the rendered DOM, not guessed from title
   length.
 - With descriptions enabled, each label wraps within the configured Text box
-  width slider, capped at 95vw.
+  width slider, capped at 95% of the parent container.
 - The Text box width slider sets the maximum width of every label box in both
   display modes. Long text wraps inside that maximum; short text keeps a
   compact max-content box.
-- Consecutive hairlines must remain at least 1 px apart.
+- Consecutive hairlines must remain at least 1 px apart when that still fits.
 - Events resolving to the same position receive a small horizontal nudge before
   the minimum gap rule is applied. The comparison uses the resolved value, so two
   events known only to the same day still count as coincident, while one of them
   naming a clock time separates them.
-- A minimum timeline width is enforced so the hairline spacing rule is never
-  violated. If the viewport is smaller, the wrapper scrolls.
+- Product / Full width never exceed the parent. If the 1 px gap cannot fit,
+  trailing hairlines share the axis end rather than overflowing or scrolling.
+  The playground width slider may grow the canvas so the gap still fits; only
+  then does the wrapper scroll.
 
 ## Stacking priority
 

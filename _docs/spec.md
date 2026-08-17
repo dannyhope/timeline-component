@@ -1,6 +1,6 @@
 # Timeline Component — Product Spec
 
-> Living document. Update whenever behaviour changes. Last updated: 2026-08-16.
+> Living document. Update whenever behaviour changes. Last updated: 2026-08-17.
 >
 > **This file is the source of truth for how the timeline should work.**
 
@@ -69,16 +69,16 @@ The universe dataset places the Big Bang in the first Planck times, then uses lo
   - Cells too narrow for text keep their dividers; labels pack to what fits.
   - Summary cell only when no coarser rows can be shown.
 - **Responsiveness**:
-  - Maintains ≥1px gap between hairlines.
-  - Minimum timeline width based on number of events.
-  - Horizontal scroll when viewport too narrow.
+  - By default the timeline **fills its parent container and is never wider**. Product embeds (Grok, a site column, a chat artifact) must not grow a horizontal scrollbar.
+  - Maintains ≥1px gap between hairlines when that still fits in the container. If the container is too narrow, trailing hairlines share the axis end rather than overflowing.
   - Scale and event layout both recompute from usable axis width.
+  - Playground only: the Timeline width slider may make the canvas wider than the container; the wrapper then scrolls. That is a developer override, not the product default.
 - **Controls** (playground only — not on product timelines):
   - Dataset radios (top of page).
   - Timeline width slider.
-  - Full width toggle.
+  - Full width toggle (default on: fill the parent container, never wider).
   - Text attachment side (left/right; defaults to left).
-  - Max label width slider (capped at 95vw).
+  - Max label width slider (capped at 95% of the parent container).
   - Extend into text space toggle (default off).
   - Periods placement: In scale (default), In events area, or Hidden.
   - Minimise button. The options panel is docked to the bottom-right of the
@@ -127,8 +127,9 @@ The arithmetic midpoint would be wrong here: for a one-decade interval it is `5.
 
 ## Tech
 - HTML first. [`timeline.js`](../timeline.js) paints the timeline from the table. Do not rewrite that file to present a new topic.
-- Styles live in [`timeline.css`](../timeline.css). Grok product files load both from the public GitHub repo via jsDelivr (see [`grok-template.html`](../grok-template.html)).
-- No JSON fetch required. The playground works over `file://`. Grok output needs a network to load the CDN copies.
+- Styles live in [`timeline.css`](../timeline.css). Remote product pages load CSS and JS from the public GitHub repo via jsDelivr (see [`template.html`](../template.html)).
+- Remote agents follow the public skill [`skills/timeline/SKILL.md`](../skills/timeline/SKILL.md).
+- No JSON fetch required. The playground works over `file://`. Pages that load the CDN copies need a network.
 - Column visibility is CSS `:has()` so it works with JS off.
 
 Implementation contract: `_docs/timeline-component.md` and `_docs/timeline-stacking-rules.md`.

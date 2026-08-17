@@ -26,11 +26,11 @@ one maintained specification.
 ## Current structure
 
 - `timeline.html` is the playground document: tables are the data; `timeline.css` styles it; `timeline.js` paints the timeline.
-- Product pages for Grok start from `grok-template.html` and load CSS/JS from the public GitHub repo.
+- Product pages start from `template.html` and load CSS/JS from the public GitHub repo.
 - Demo datasets are `<table class="timeline-data">` sections in that file.
 - Without JS the tables and column toggles remain usable (progressive enhancement).
-- The timeline canvas is full viewport width and is independent of the centred
-  page column.
+- The timeline canvas fills its parent container (`.page` / the embed) and is
+  not wider than that container. It does not break out to the viewport.
 - The timeline height follows the stacked labels.
 - In **playground** mode the options panel is fixed to the bottom-right of the
   viewport. In **product** mode (`body` without class `playground`) that dock is not shown.
@@ -81,22 +81,24 @@ description, so it remains deliberately minimal.
 
 ### Full width
 
-When checked (the default), the timeline always uses the full available
-viewport width and tracks window resizes. The Timeline width slider is
-disabled in this mode.
+When checked (the default), the timeline fills its parent container and tracks
+that container's size on resize. It is never wider than the parent, so the
+page does not grow a horizontal scrollbar. The Timeline width slider is
+disabled in this mode. Product timelines always behave this way.
 
 ### Timeline width
 
 When Full width is off, the slider sets the timeline scale. Moving the slider
 turns Full width off. The minimum is 320px, the maximum is 10000px, and that
-maximum expands further to the available viewport width when needed.
+maximum expands further to the available container width when needed. If the
+chosen width exceeds the container, the wrapper scrolls — playground only.
 
 ### Text box width
 
 The slider sets the maximum width of every event label, from 120px to 1000px. It
 applies whether descriptions are enabled or not. Long text wraps inside the
 selected maximum; short text keeps a compact max-content box. The effective
-maximum is capped at 95vw.
+maximum is capped at 95% of the parent container.
 
 ### Scale numbers
 
@@ -205,16 +207,18 @@ from it. Nothing downstream needs to know about resolutions.
     instead; when hidden it is zero.
 - Universe positions use `log(t / tMin) / log(tMax / tMin)` so Planck-time
   events and gigayear-scale futures share one axis.
-- The wrapper may scroll horizontally when the minimum spacing or selected
-  timeline width exceeds the viewport.
+- The wrapper may scroll horizontally only when the playground width slider
+  makes the canvas wider than the parent. Product / Full width never overflow.
 
 ## Verification checklist
 
 After a significant change, check:
 
-- default page load with Full width on;
+- default page load with Full width on: timeline equals the parent width, no
+  horizontal scrollbar;
 - Full width off, then timeline widths 320px, 600px, 900px, 1400px, and 10000px;
-- resizing the viewport with Full width on keeps the timeline edge-to-edge;
+- resizing the container with Full width on keeps the timeline equal to it and
+  still without a horizontal scrollbar;
 - descriptions off and on;
 - attachment right and left;
 - Periods In scale, In events area, and Hidden;

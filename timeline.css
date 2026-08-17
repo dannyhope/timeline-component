@@ -20,9 +20,15 @@
       padding: 2rem 1rem 4rem;
     }
 
+    body:not(.playground) {
+      overflow-x: hidden;
+    }
+
     .page {
       position: relative;
+      width: 100%;
       max-width: 1100px;
+      min-width: 0;
       margin: 0 auto;
     }
 
@@ -67,6 +73,7 @@
 
     .timeline-slot {
       position: relative;
+      min-width: 0;
       min-height: calc(var(--scale-height, 3.2rem) + 340px + 1.75rem);
     }
 
@@ -74,27 +81,34 @@
     .timeline-wrapper {
       position: relative;
       /*
-       * The timeline has its own horizontal canvas. Pull it out of the
-       * centred .page max-width so the timeline-width control can use the
-       * available viewport instead of being constrained by the page column.
-       * Height follows the stack; the options panel is positioned absolutely
-       * so it does not move when that height changes.
+       * Default: fill the parent (.page / embed) and never run wider.
+       * Playground may still scroll when the width slider exceeds the
+       * container; product clips rather than showing a horizontal bar.
        */
-      width: 100vw;
-      left: 50%;
-      transform: translateX(-50%);
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
       min-height: 340px;
       padding-top: var(--scale-height, 3.2rem); /* room for hierarchical scale grid */
       overflow-x: auto;
     }
 
+    body:not(.playground) .timeline-wrapper {
+      overflow-x: hidden;
+    }
+
     .timeline {
       position: relative;
       width: 100%;
+      max-width: 100%;
       font-size: 1rem; /* browser root size; independent of timeline width */
       font-weight: 400;
       font-synthesis: none;
       height: 320px; /* extra room for tall stacks when compressed */
+    }
+
+    body.playground .timeline {
+      max-width: none; /* slider may make the canvas wider than the wrapper */
     }
 
     /* The main horizontal axis — JS sets left/right according to attachment side */

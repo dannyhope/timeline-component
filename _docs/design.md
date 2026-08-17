@@ -1,6 +1,6 @@
 # Timeline Component — Design
 
-> Living document. Update whenever visual design changes. Last updated: 2026-08-16.
+> Living document. Update whenever visual design changes. Last updated: 2026-08-17.
 >
 > **This file is the source of truth for how the timeline should look.**
 
@@ -9,6 +9,7 @@
 - Event markers via vertical hairlines to labels.
 - Labels: Boxes with background, blur, shadow, higher z-index.
 - **Hierarchical scale grid** above the axis (year/month/day, era/tick, …).
+- The timeline canvas fills the width of its parent (the page column or embed) and does not spill past it.
 - Page header: title and short subtitle. Dataset radios are playground-only.
 - Below the timeline: the data table (column 1 = ISO time) and column checkboxes. Column B on by default; later columns off.
 
