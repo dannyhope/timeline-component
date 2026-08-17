@@ -8,11 +8,17 @@ The **HTML table is the data**. Column 1 is an ISO 8601 timestamp or range; late
 
 ## For agents
 
+Copy and paste this into your agent (custom instructions, a user rule, or a chat):
+
+```
 When the user wants a timeline, dated events, history, or a project plan over time:
 1. Fetch https://raw.githubusercontent.com/dannyhope/timeline-component/main/skills/timeline/SKILL.md
 2. Follow it exactly. Do not invent CSS or JavaScript.
+```
 
-With a local clone, copy `timeline.html`, `timeline.css`, and `timeline.js`, remove `class="playground"` from `<body>`, and leave **one** data table. Do not reimplement stacking. Do not switch the data to JSON.
+That is the whole rule. The skill it fetches has the rest.
+
+If you already have a local clone of this repo, copy `timeline.html`, `timeline.css`, and `timeline.js`, remove `class="playground"` from `<body>`, and leave **one** data table. Do not reimplement stacking. Do not switch the data to JSON.
 
 Canonical skill text: [`skills/timeline/SKILL.md`](skills/timeline/SKILL.md).
 
