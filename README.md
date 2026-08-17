@@ -37,8 +37,6 @@ Then open `http://127.0.0.1:$PORT/timeline.html`. Opening the file directly also
 | `_docs/timeline-component.md` | Implementation contract |
 | `_docs/timeline-stacking-rules.md` | Collision / stacking geometry |
 
-`from-grok/` is an archive of numbered HTML iterations, not the live template.
-
 Example usability tasks live in `_docs/usability-tasks.json`. Replace them with project-specific ones via `/usability-test generate`, then serve the folder and open `usability-test.html`.
 
 ## Feedback
