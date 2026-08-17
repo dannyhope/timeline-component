@@ -2,7 +2,7 @@
 
 This is the **template** for presenting timeline-shaped information.
 
-Public repo: [github.com/dannyhope/timeline-component](https://github.com/dannyhope/timeline-component)
+Public repo: [dannyhope.co.uk/timeline](https://dannyhope.co.uk/timeline)
 
 The **HTML table is the data**. Column 1 is an ISO 8601 timestamp or range; later columns are content (B on by default, C+ off). JavaScript paints the stacked timeline from that table. With JS off, the table and column toggles still work.
 
