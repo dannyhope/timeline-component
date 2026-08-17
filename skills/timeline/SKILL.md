@@ -5,42 +5,52 @@ description: Present chronological, historical, or project-timeline information 
 
 # Timeline
 
-Danny's reusable timeline is **not** a markdown list, Mermaid Gantt, JSON blob, or Cursor Canvas. Emit a self-contained HTML file whose **table is the data**. JavaScript paints the timeline from that table; without JS the table still works (progressive enhancement).
+This reusable timeline is **not** a markdown list, Mermaid Gantt, JSON blob, or a canvas. Emit **one HTML file** whose **table is the data**. JavaScript paints the timeline from that table; without JS the table still works (progressive enhancement).
 
-**Repo:** `/Users/dannyhope/Dropbox/Timeline component/timeline-component`
+**Repo:** https://github.com/dannyhope/timeline-component
 
-## Before writing HTML
+Do not invent CSS or JavaScript. Do not rewrite stacking or collision logic.
 
-Read `_docs/spec.md` and `_docs/dataset-schema.md`. Copy `timeline.html` and `timeline.js`. Do not rewrite `timeline.js`.
+## Remote agents (no local clone)
 
-## Produce a product timeline
+1. Fetch https://raw.githubusercontent.com/dannyhope/timeline-component/main/template.html
+2. Copy it. Keep the jsDelivr `<link>` and `<script src>` unchanged:
+   - `https://cdn.jsdelivr.net/gh/dannyhope/timeline-component@main/timeline.css`
+   - `https://cdn.jsdelivr.net/gh/dannyhope/timeline-component@main/timeline.js`
+3. Replace only the data table (caption, `data-origin` / `data-end` / `data-kind`, rows).
+4. Keep `#timeline` and the hidden `#controls` fields — the script reads them even when they are hidden.
 
-1. Copy `timeline.html` and `timeline.js`. Do not rewrite `timeline.js`.
-2. Remove `playground` from `<body>` (product).
-3. Leave **one** `<section class="timeline-source">` with:
+The only `<script src>` must be that jsDelivr `timeline.js` URL. If you write stacking code yourself, you dropped the renderer — start again from the skeleton.
+
+## Local agents (working copy of this repo)
+
+1. Read `_docs/spec.md` and `_docs/dataset-schema.md`.
+2. Copy `timeline.html`, `timeline.css`, and `timeline.js`. Do not rewrite `timeline.js`.
+3. Remove `playground` from `<body>`.
+4. Leave **one** `<section class="timeline-source">`.
+
+## Table contract (every surface)
 
 - Column 1: `<time datetime="ISO">` — timestamp or `start/end` interval
 - Column 2: primary text (checkbox on by default)
 - Later columns: extra fields (checkboxes off by default)
+- ISO precision *is* the resolution. Hairlines sit at the interval centre.
+- Labels attach to the **left** of the hairline by default.
+- `body` must **not** have class `playground`
+- British English in user-visible copy
 
-4. ISO precision *is* the resolution. Hairlines sit at the interval centre.
-5. Labels attach to the **left** of the hairline by default.
-6. British English in user-visible copy.
+## Playground vs product page
 
-## Playground vs product
-
-| Playground (`body.playground`) | Product (no that class) |
+| Playground (`body.playground`) | Product page (no that class) |
 |----------------------------------|-------------------|
-| Demo tables, dataset radios, Flags dock | One table + column toggles; timeline if JS is on (`body` without `playground`) |
+| Demo tables, dataset radios, Flags dock | One table + column toggles; timeline if JS is on |
 
-Column checkboxes are product UI. The Flags dock is not.
+Column checkboxes are product-page UI. The Flags dock is not.
 
 ## Do not
 
 - Dump events only as chat bullets
-- Use Cursor Canvas
 - Port to React/shadcn unless Danny asks
 - Put the events in JSON instead of a table
 - Rewrite collision logic from memory
-
-Grok: paste `grok-prompt.md` into Grok’s project instructions. It points at the public GitHub repo so Grok loads CSS/JS by URL. How-to: `grok-instructions.md`.
+- Use markdown lists, Mermaid, or JSON as the primary view

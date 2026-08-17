@@ -5,7 +5,7 @@
 > **This file is the source of truth for how the timeline should work.**
 
 ## Purpose
-This repo is the **template** for presenting timeline-shaped information — on a website, in a Grok conversation, or in Cursor. Agents copy `timeline.html` and swap the dataset; they do not invent a new layout.
+This repo is the **template** for presenting timeline-shaped information — on a website, in a chat, or in an editor. Agents copy `timeline.html` and swap the dataset; they do not invent a new layout.
 
 ## Surfaces
 
@@ -69,7 +69,7 @@ The universe dataset places the Big Bang in the first Planck times, then uses lo
   - Cells too narrow for text keep their dividers; labels pack to what fits.
   - Summary cell only when no coarser rows can be shown.
 - **Responsiveness**:
-  - By default the timeline **fills its parent container and is never wider**. Product embeds (Grok, a site column, a chat artifact) must not grow a horizontal scrollbar.
+  - By default the timeline **fills its parent container and is never wider**. Product embeds (a site column, a chat artifact) must not grow a horizontal scrollbar.
   - Maintains ≥1px gap between hairlines when that still fits in the container. If the container is too narrow, trailing hairlines share the axis end rather than overflowing.
   - Scale and event layout both recompute from usable axis width.
   - Playground only: the Timeline width slider may make the canvas wider than the container; the wrapper then scrolls. That is a developer override, not the product default.

@@ -55,7 +55,7 @@ When civil ISO cannot name the axis (Myr, log seconds), set `data-at` (and optio
 
 ## Agent output
 
-1. Copy `timeline.html`, `timeline.css`, and `timeline.js` (or start from `grok-template.html` and load CSS/JS from the public GitHub repo).
+1. Copy `timeline.html`, `timeline.css`, and `timeline.js` (or start from `template.html` and load CSS/JS from the public GitHub repo).
 2. Remove `class="playground"` from `<body>`.
 3. Leave one `.timeline-source` whose table is this topic.
 4. Do not rewrite `timeline.js`. Do not replace the table with JSON.

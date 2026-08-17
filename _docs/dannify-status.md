@@ -8,7 +8,7 @@
 
 - `_docs/spec.md` and `_docs/design.md` are the product truth
 - README purpose, feedback (danny.hope@gmail.com), and dannyhope.co.uk attribution
-- Muted “A Danny Hope product” footer on `timeline.html`
+- Muted “A Danny Hope template” footer on `timeline.html`
 - `.in/` inbox with README
 - `_vibing/` for git-ignored vibe logs
 - `.gitignore` includes `_vibing/` and `.DS_Store`

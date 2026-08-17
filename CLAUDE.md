@@ -26,7 +26,7 @@ python3 -m http.server "$PORT"
 # open http://127.0.0.1:$PORT/timeline.html
 ```
 
-Grok: paste [`grok-prompt.md`](grok-prompt.md) into Grok’s instructions. CSS/JS load from GitHub (jsDelivr), not from the prompt. How-to: [`grok-instructions.md`](grok-instructions.md).
+Agents: fetch [`skills/timeline/SKILL.md`](https://raw.githubusercontent.com/dannyhope/timeline-component/main/skills/timeline/SKILL.md) and follow it. Do not invent CSS or JavaScript.
 
 ## Notion vs this repo
 
