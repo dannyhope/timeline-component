@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dannify status — Timeline component</title>
+  <link rel="stylesheet" href="operator.css">
+  <style>
+    .panel { margin: 0 0 1rem; }
+    .panel h2 { margin-top: 0; }
+    .panel ul { margin: 0 0 0.85rem; padding-left: 1.2rem; }
+    .panel li { margin: 0 0 0.35rem; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Dannify status — Timeline component</h1>
+    <p class="meta">Living audit. Regenerated whenever <code>/dannify</code> runs. Last updated: 2026-08-25.</p>
+    <p class="hint">What still needs doing, then what’s already up to spec. Product truth is <code>_docs/spec.md</code> and <code>_docs/design.md</code>. Current KPI is <code>_docs/now.md</code>.</p>
+
+    <section class="panel">
+      <h2>Improvements</h2>
+      <h3>Must</h3>
+      <ul>
+        <li>Point README feedback at <code>https://dannyhope.co.uk/feedback</code> (replace the public Gmail address)</li>
+      </ul>
+      <h3>Should</h3>
+      <ul>
+        <li>Add <code>_docs/now.md</code> with a current KPI (set via <code>/goal</code> — do not invent)</li>
+        <li>State accessibility level in <code>_docs/spec.md</code> (honest “none” is fine)</li>
+        <li>Footer credit colour is <code>#888</code> in <code>timeline.css</code> — use Cool Grey 60 (<code>#616E73</code>)</li>
+        <li>Drop <code>.site-footer</code> <code>border-top</code> in <code>timeline.css</code> — separate with spacing</li>
+        <li><code>usability-test.html</code> needs sibling <code>operator.css</code>; remove the invented inline palette</li>
+        <li>Data table headings in <code>timeline.html</code> should re-sort the rows on click</li>
+        <li>Map invented greys in <code>timeline.css</code> / <code>_docs/design.md</code> to brand Cool Grey tokens</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Already right</h2>
+      <ul>
+        <li><code>_docs/spec.md</code> and <code>_docs/design.md</code> are the product truth (living headers)</li>
+        <li>README has a clear purpose before install/usage</li>
+        <li>Attribution “A Danny Hope template” → <code>https://dannyhope.co.uk</code> on playground and <code>template.html</code></li>
+        <li>Public repo link uses the <code>dannyhope.co.uk/timeline</code> hop</li>
+        <li><code>.in/</code> inbox with README</li>
+        <li><code>_vibing/</code> exists; <code>.gitignore</code> includes <code>_vibing/</code> and <code>.DS_Store</code></li>
+        <li><code>timeline-component.code-workspace</code> present</li>
+        <li><code>CLAUDE.md</code> for agents (port, table-as-data, no second Flags panel)</li>
+        <li><code>.dev-port</code> (5330) and <code>scripts/resolve-dev-port.sh</code></li>
+        <li>Listed in Bombay <code>projects.json</code> as <code>timeline-component</code></li>
+        <li>Usability-test scaffold (<code>_docs/usability-tasks.json</code> + <code>usability-test.html</code>)</li>
+        <li>Playground Flags dock already exists — do not add a second flags UI / Prototype Panels duplicate</li>
+        <li>HTML-first template (not React/shadcn) by design — justified exception</li>
+        <li>No theme picker; not a Chrome extension or Figma plugin; not a crawled public site (sitemap N/A)</li>
+        <li>Data table uses hairline cell borders, not zebra striping</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
