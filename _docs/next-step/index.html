@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose the next step — Timeline component</title>
+  <link rel="stylesheet" href="../operator.css">
+  <style>
+    .step { margin: 0 0 1rem; }
+    .step:last-child { margin-bottom: 0; }
+    .step-head { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); gap: .65rem; align-items: start; cursor: pointer; }
+    .step-head h2 { grid-column: 2; margin: 0; font-size: 1rem; }
+    .step-head input { width: 1.1rem; height: 1.1rem; margin: .15rem 0 0; accent-color: var(--done); }
+    .step > :not(.step-head) { margin-left: 1.9rem; }
+    .step.is-done > :not(.step-head) { display: none; }
+    .step.is-done h2 { color: var(--muted); font-weight: 400; text-decoration: line-through; }
+    .where { margin-top: .45rem; color: var(--muted); font-size: .88rem; }
+    .evidence { margin-top: 1rem; }
+    .evidence li { margin-bottom: .5rem; }
+    code { background: var(--code); padding: .1em .3em; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Choose the next step — Timeline component</h1>
+    <p class="meta">Evidence reviewed: the repository, its inbox, and previous Cursor conversation transcripts. No current goal is set in <code>_docs/now.md</code>.</p>
+
+    <section class="panel">
+      <div class="step" data-step="goal">
+        <div class="step-head">
+          <input type="checkbox" aria-label="Done">
+          <h2>Set one current goal for this month</h2>
+        </div>
+        <p class="where">In this chat: choose one candidate below, then I can write <code>_docs/now.md</code> via <code>/goal set</code>.</p>
+        <ul>
+          <li><strong>Recommended:</strong> Make the timeline component tryable by one real person. We’ll know when a sendable demo URL exists and one person has used it.</li>
+          <li>Make the HTML-first template dependable for agents. We’ll know when the documented contract passes a small fixture test across calendar, linear, and logarithmic scales.</li>
+          <li>Make the component visibly distinct from generic timeline libraries. We’ll know when a short comparison page explains the interval-centred hairlines, adaptive stacking, and HTML-table source of truth, with one external review.</li>
+        </ul>
+      </div>
+
+      <div class="step" data-step="competitor">
+        <div class="step-head">
+          <input type="checkbox" aria-label="Done">
+          <h2>Clarify the competitor before doing a comparison</h2>
+        </div>
+        <p class="where">Your next reply: send the exact “Stoo” URL or product name. A web search found no identifiable timeline product called Stoo; it surfaced unrelated references to Gregory Stoos / Planless instead.</p>
+        <p>Once identified, I’ll compare the competitor against this component on data model, responsive behaviour, stacking, accessibility, embedding, and developer effort. Comparing against the wrong product would produce misleading prioritisation.</p>
+      </div>
+
+      <div class="step" data-step="inbox">
+        <div class="step-head">
+          <input type="checkbox" aria-label="Done">
+          <h2>Close the current inbox loop</h2>
+        </div>
+        <p class="where">This repo’s <code>.in/</code>: the only unclosed prompt is this competitor-and-next-step request; the other recent prompts are already in <code>.in/built/</code>.</p>
+        <p>After choosing the goal and naming the competitor, refine this task into a concrete implementation or research task. Avoid adding polish or documentation before that decision.</p>
+      </div>
+    </section>
+
+    <section class="panel evidence">
+      <h2>What the previous work says</h2>
+      <ul>
+        <li>The product is explicitly a reusable HTML-first template, not a standalone project-management product.</li>
+        <li>The distinctive capability is the combination of interval-centred positioning, collision-aware label stacking, hierarchical scale grids, and progressive enhancement.</li>
+        <li>Recent repository audit items still include sortable table headings, accessibility wording, colour-token cleanup, and a feedback-link fix, but there is no current KPI to rank them against.</li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    const key = 'timeline-component-next-step-done-v1';
+    let done = {};
+    try { done = JSON.parse(localStorage.getItem(key) || '{}'); } catch {}
+    document.querySelectorAll('[data-step]').forEach((step) => {
+      const input = step.querySelector('input');
+      const apply = () => {
+        step.classList.toggle('is-done', input.checked);
+        if (input.checked) done[step.dataset.step] = true;
+        else delete done[step.dataset.step];
+        localStorage.setItem(key, JSON.stringify(done));
+      };
+      input.checked = !!done[step.dataset.step];
+      apply();
+      input.addEventListener('change', apply);
+      step.querySelector('.step-head').addEventListener('click', (event) => {
+        if (event.target === input) return;
+        input.checked = !input.checked;
+        apply();
+      });
+    });
+  </script>
+</body>
+</html>

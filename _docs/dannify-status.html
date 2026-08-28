@@ -15,24 +15,25 @@
 <body>
   <div class="page">
     <h1>Dannify status — Timeline component</h1>
-    <p class="meta">Living audit. Regenerated whenever <code>/dannify</code> runs. Last updated: 2026-08-25.</p>
+    <p class="meta">Living audit. Regenerated whenever <code>/dannify</code> runs. Last updated: 2026-08-28.</p>
     <p class="hint">What still needs doing, then what’s already up to spec. Product truth is <code>_docs/spec.md</code> and <code>_docs/design.md</code>. Current KPI is <code>_docs/now.md</code>.</p>
 
     <section class="panel">
       <h2>Improvements</h2>
       <h3>Must</h3>
       <ul>
-        <li>Point README feedback at <code>https://dannyhope.co.uk/feedback</code> (replace the public Gmail address)</li>
+        <li>Point README feedback at <code>https://dannyhope.co.uk/feedback</code> instead of the public Gmail address</li>
+        <li>Add the stable <code>timeline-component.test</code> mapping, <code>scripts/ensure-local-domain.sh</code>, and wire the check into local development</li>
       </ul>
       <h3>Should</h3>
       <ul>
         <li>Add <code>_docs/now.md</code> with a current KPI (set via <code>/goal</code> — do not invent)</li>
-        <li>State accessibility level in <code>_docs/spec.md</code> (honest “none” is fine)</li>
-        <li>Footer credit colour is <code>#888</code> in <code>timeline.css</code> — use Cool Grey 60 (<code>#616E73</code>)</li>
-        <li>Drop <code>.site-footer</code> <code>border-top</code> in <code>timeline.css</code> — separate with spacing</li>
-        <li><code>usability-test.html</code> needs sibling <code>operator.css</code>; remove the invented inline palette</li>
-        <li>Data table headings in <code>timeline.html</code> should re-sort the rows on click</li>
-        <li>Map invented greys in <code>timeline.css</code> / <code>_docs/design.md</code> to brand Cool Grey tokens</li>
+        <li>State the accessibility level in <code>_docs/spec.md</code> (honest “none” is fine)</li>
+        <li>Change the footer credit colour from <code>#888</code> to Cool Grey 60 (<code>#616E73</code>)</li>
+        <li>Remove the decorative <code>.site-footer</code> <code>border-top</code> from <code>timeline.css</code></li>
+        <li>Make <code>usability-test.html</code> use sibling <code>operator.css</code> rather than an invented inline palette</li>
+        <li>Make data-table headings in <code>timeline.html</code> re-sort rows on click and show direction</li>
+        <li>Replace invented greys in <code>timeline.css</code> and <code>_docs/design.md</code> with documented brand Cool Grey tokens</li>
       </ul>
     </section>
 
