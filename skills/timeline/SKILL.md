@@ -11,6 +11,14 @@ This reusable timeline is **not** a markdown list, Mermaid Gantt, JSON blob, or 
 
 By default, do not invent CSS or JavaScript, and do not rewrite stacking or collision logic. Make those changes only when Danny asks for them (for example sticky labels, skipping empty periods, or a better layout).
 
+## Check GitHub comments
+
+Before working on a timeline, check the repo for comments people have left: open issues, pull request comments and review comments, and commit comments (for example `gh issue list`, `gh pr list` and `gh api repos/dannyhope/timeline-component/comments`). Then:
+
+1. Explain each comment in a sentence or two, in plain words: what it asks for and what it would change.
+2. Ask Danny whether to implement it, one comment at a time, as a yes or no question.
+3. Make only the changes he says yes to. If there are no comments, say so in one line and carry on.
+
 ## Ask first
 
 Before building, ask the person who asked for the timeline these two questions (one short message, both at once). Skip a question only if they've already answered it.
