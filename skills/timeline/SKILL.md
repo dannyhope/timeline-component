@@ -9,7 +9,18 @@ This reusable timeline is **not** a markdown list, Mermaid Gantt, JSON blob, or 
 
 **Repo:** https://github.com/dannyhope/timeline-component
 
-Do not invent CSS or JavaScript. Do not rewrite stacking or collision logic.
+By default, do not invent CSS or JavaScript, and do not rewrite stacking or collision logic. Make those changes only when Danny asks for them (for example sticky labels, skipping empty periods, or a better layout).
+
+## Ask first
+
+Before building, ask the person who asked for the timeline these two questions (one short message, both at once). Skip a question only if they've already answered it.
+
+1. **Range slider:** "Do you want a date slider so you can narrow the timeline to a range?" If yes, add a two-handle date-range slider above the views. It filters the rows shown in every view, instantly, with no transitions.
+2. **Table view:** "Do you want a vertical table view as well, with a switch between it and the timeline?" If yes, show the timeline and the table as alternative views, one at a time, with a two-segment switch ("Timeline" | "Table", timeline selected by default). The selected segment must be unmistakably distinct. Switching is instant, segments are keyboard accessible (buttons with `aria-pressed`, or a radio group) and show the pointer cursor. When switching back to the timeline, fire a `resize` so it measures itself. If no, keep the default: the table is the data source and the timeline replaces it when JS is on.
+
+Don't use an expand/collapse toggle to hide either view.
+
+When the timeline has a vertical or table view, keep the scale labels (year, month, and so on) position sticky, and offer a way to skip empty stretches of the scale. Label those stretches as a count, for example "4 days skipped".
 
 ## Remote agents (no local clone)
 
@@ -20,12 +31,12 @@ Do not invent CSS or JavaScript. Do not rewrite stacking or collision logic.
 3. Replace only the data table (caption, `data-origin` / `data-end` / `data-kind`, rows).
 4. Keep `#timeline` and the hidden `#controls` fields — the script reads them even when they are hidden.
 
-The only `<script src>` must be that jsDelivr `timeline.js` URL. If you write stacking code yourself, you dropped the renderer — start again from the skeleton.
+The only `<script src>` must be that jsDelivr `timeline.js` URL, unless Danny has asked for a layout or behaviour change that needs a local edit. If you write stacking code yourself from scratch, you dropped the renderer, so start again from the skeleton.
 
 ## Local agents (working copy of this repo)
 
 1. Read `_docs/spec.md` and `_docs/dataset-schema.md`.
-2. Copy `timeline.html`, `timeline.css`, and `timeline.js`. Do not rewrite `timeline.js`.
+2. Copy `timeline.html`, `timeline.css`, and `timeline.js`. Do not rewrite `timeline.js` unless Danny asks for a layout or behaviour change.
 3. Remove `playground` from `<body>`.
 4. Leave **one** `<section class="timeline-source">`.
 
@@ -47,10 +58,18 @@ The only `<script src>` must be that jsDelivr `timeline.js` URL. If you write st
 
 Column checkboxes are product-page UI. The Flags dock is not.
 
+## Records and dates
+
+Merge things that happen at the same time into one record, shown as a short list. Use short human dates such as "6 Nov" (include the year only if it is not the current year). Put the time relative to the main event start (for example doors opening) in brackets, such as "T − 1 d".
+
+## Before saving
+
+Check the copy for redundant wording, and cut asides that only repeat the line they sit on. Check the wording against Danny's content style guide: https://app.notion.com/p/dannyhope/Danny-Hope-content-style-guide-3089c704b5738095bbc2fa33e60d4439
+
 ## Do not
 
 - Dump events only as chat bullets
 - Port to React/shadcn unless Danny asks
 - Put the events in JSON instead of a table
-- Rewrite collision logic from memory
+- Rewrite collision logic from memory; if Danny asks for a layout change, edit the existing files rather than starting again
 - Use markdown lists, Mermaid, or JSON as the primary view
